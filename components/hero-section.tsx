@@ -5,7 +5,7 @@ import { ChevronDown } from "lucide-react"
 import Image from "next/image"
 
 const images = [
-  "/images/bottle1.png",
+  "/images/bottle-premium-white.png",
   "/images/bottle2.png",
   "/images/bottle3.png",
   "/images/bottle1.png",
@@ -34,7 +34,7 @@ export function HeroSection() {
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentIndex((prev) => (prev + 1) % images.length)
-    }, 4000) // 1.5s animation + 2.5s hold
+    }, 9000) // 1.5s animation + 2.5s hold
     return () => clearInterval(interval)
   }, [])
 
