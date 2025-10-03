@@ -6,7 +6,6 @@ import Link from "next/link"
 import { useState, useMemo } from "react"
 
 // --- Product Data ---
-// Note: Price is now a number (no $ sign) which is required for correct numerical sorting.
 const products = [
   {
     id: 1,
@@ -64,32 +63,23 @@ const products = [
   },
 ]
 
-// The `allCategories` constant is removed as it is no longer used.
-
 export default function ShopPage() {
   const [searchTerm, setSearchTerm] = useState("")
-  // The `activeCategory` state is removed.
   const [sortOption, setSortOption] = useState("default")
 
-  // Use useMemo to filter + search + sort products efficiently
+  // Filtering + sorting logic
   const filteredProducts = useMemo(() => {
-    // Start with a filtered list based on the search term.
-    let currentProducts = products.filter(
-        (product) => {
-            if (searchTerm.trim() === "") return true; // Show all if search is empty
+    let currentProducts = products.filter((product) => {
+      if (searchTerm.trim() === "") return true
+      const lowerCaseSearch = searchTerm.toLowerCase()
+      return (
+        product.name.toLowerCase().includes(lowerCaseSearch) ||
+        product.description.toLowerCase().includes(lowerCaseSearch)
+      )
+    })
 
-            const lowerCaseSearch = searchTerm.toLowerCase();
-            return (
-                product.name.toLowerCase().includes(lowerCaseSearch) ||
-                product.description.toLowerCase().includes(lowerCaseSearch)
-            );
-        }
-    );
-    
-    // Create a mutable copy for sorting
-    let sortedProducts = [...currentProducts];
+    let sortedProducts = [...currentProducts]
 
-    // 2. Sorting Logic
     if (sortOption === "low-high") {
       sortedProducts.sort((a, b) => a.price - b.price)
     } else if (sortOption === "high-low") {
@@ -97,10 +87,9 @@ export default function ShopPage() {
     } else if (sortOption === "popular") {
       sortedProducts.sort((a, b) => b.popularity - a.popularity)
     }
-    // "default" will maintain the order from the search filter.
 
     return sortedProducts
-  }, [searchTerm, sortOption]) // Dependencies updated
+  }, [searchTerm, sortOption])
 
   return (
     <main className="min-h-screen bg-black">
@@ -122,11 +111,9 @@ export default function ShopPage() {
             </p>
           </div>
 
-          {/* --- Filter, Search & Sort Section (Updated) --- */}
-          {/* Alignment changed to put search on the left and sort on the right for a cleaner look */}
+          {/* Search + Sort */}
           <div className="flex flex-col md:flex-row gap-6 mb-16 md:justify-between">
-            
-            {/* Search Input (Now aligned left, taking primary focus on mobile) */}
+            {/* Search */}
             <div className="relative w-full md:w-auto md:min-w-[300px] order-1">
               <input
                 type="text"
@@ -141,11 +128,16 @@ export default function ShopPage() {
                 viewBox="0 0 24 24"
                 stroke="currentColor"
               >
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                />
               </svg>
             </div>
-            
-            {/* Sort Dropdown (Now aligned right, placed second) */}
+
+            {/* Sort */}
             <div className="relative w-full md:w-auto md:min-w-[200px] order-2">
               <select
                 value={sortOption}
@@ -167,11 +159,10 @@ export default function ShopPage() {
               </svg>
             </div>
           </div>
-          {/* --- End Filter, Search & Sort Section --- */}
 
-          {/* Product Grid */}
+          {/* Product Grid (max 3 per row) */}
           {filteredProducts.length > 0 ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-8 gap-y-12">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-12">
               {filteredProducts.map((product) => (
                 <Link
                   key={product.id}
@@ -186,8 +177,8 @@ export default function ShopPage() {
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-transparent via-transparent to-white/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
                   </div>
-                  
-                  {/* Category and Popularity Detail */}
+
+                  {/* Category + Popularity */}
                   <div className="flex justify-between items-center mb-1">
                     <p className="text-xs tracking-widest uppercase text-white/50">
                       {product.category}
@@ -196,16 +187,14 @@ export default function ShopPage() {
                       Pop: {product.popularity}%
                     </p>
                   </div>
-                  
+
                   <h3 className="text-xl font-serif mb-2 text-white group-hover:text-white/80 transition-colors">
                     {product.name}
                   </h3>
                   <p className="text-sm text-white/70 mb-4 h-10 line-clamp-2">
                     {product.description}
                   </p>
-                  <p className="text-lg font-bold text-white">
-                    ${product.price}
-                  </p>
+                  <p className="text-lg font-bold text-white">${product.price}</p>
                 </Link>
               ))}
             </div>
